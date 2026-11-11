@@ -663,13 +663,16 @@ fn check_invalid_vector(vector: &Value, error: &Error) {
 
 #[test]
 fn get_keys_vectors() {
-    check(include_str!("get_keys.json"), &get_keys_messages());
+    check(
+        include_str!("../../test_vectors/get_keys.json"),
+        &get_keys_messages(),
+    );
 }
 
 #[test]
 fn register_descriptor_vectors() {
     check(
-        include_str!("register_descriptor.json"),
+        include_str!("../../test_vectors/register_descriptor.json"),
         &register_descriptor_messages(),
     );
 }
@@ -677,37 +680,55 @@ fn register_descriptor_vectors() {
 #[test]
 fn address_verification_vectors() {
     check(
-        include_str!("address_verification.json"),
+        include_str!("../../test_vectors/address_verification.json"),
         &address_verification_messages(),
     );
 }
 
 #[test]
 fn signing_vectors() {
-    check(include_str!("signing.json"), &signing_messages());
+    check(
+        include_str!("../../test_vectors/signing.json"),
+        &signing_messages(),
+    );
 }
 
 #[test]
 fn nonce_cache_vectors() {
-    check(include_str!("nonce_cache.json"), &nonce_cache_messages());
+    check(
+        include_str!("../../test_vectors/nonce_cache.json"),
+        &nonce_cache_messages(),
+    );
 }
 
 #[test]
 fn get_info_vectors() {
-    check(include_str!("get_info.json"), &get_info_messages());
+    check(
+        include_str!("../../test_vectors/get_info.json"),
+        &get_info_messages(),
+    );
 }
 
 #[test]
 fn error_vectors() {
-    check(include_str!("errors.json"), &error_messages());
+    check(
+        include_str!("../../test_vectors/errors.json"),
+        &error_messages(),
+    );
 }
 
 #[test]
 fn versioning_vectors() {
-    check(include_str!("versioning.json"), &versioning_messages());
+    check(
+        include_str!("../../test_vectors/versioning.json"),
+        &versioning_messages(),
+    );
 }
 
 #[test]
 fn invalid_vectors() {
-    check_invalid(include_str!("invalid.json"), &invalid_errors());
+    check_invalid(
+        include_str!("../../test_vectors/invalid.json"),
+        &invalid_errors(),
+    );
 }

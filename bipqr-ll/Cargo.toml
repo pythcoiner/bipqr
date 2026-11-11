@@ -7,6 +7,8 @@ description = "Dependency-free codec for the draft QR signing protocol"
 license = "MIT"
 authors = ["pythcoiner"]
 repository = "https://github.com/pythcoiner/bipqr"
+# The tests load their vectors from the repo-level `test_vectors/`, outside the crate.
+include = ["Cargo.toml", "README.md", "src/**/*.rs", "include/*.h", "examples/*.c"]
 
 [lib]
 path = "src/lib.rs"
