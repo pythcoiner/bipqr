@@ -1,3 +1,28 @@
+[package]
+name = "bipqr"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.88"
+description = "Codec for the draft QR signing protocol"
+license = "MIT"
+authors = ["pythcoiner"]
+repository = "https://github.com/pythcoiner/bipqr"
+include = ["Cargo.toml", "LICENSE", "README.md", "src/**/*.rs"]
+
+[lib]
+path = "src/lib.rs"
+
 [workspace]
 resolver = "3"
 members = ["bipqr-ll"]
+exclude = ["fuzz", "examples"]
+
+[dependencies]
+bipqr-ll = { version = "0.0.1", path = "bipqr-ll" }
+# `std` is left to the caller: the backend itself only needs `alloc`.
+bitcoin_0_32 = { package = "bitcoin", version = "0.32", default-features = false, optional = true }
+
+[features]
+default = ["bitcoin_latest"]
+bitcoin_0_32 = ["dep:bitcoin_0_32"]
+bitcoin_latest = ["bitcoin_0_32"]

@@ -1,0 +1,14 @@
+[package]
+name = "bipqr-example-bitcoin-0-32-5"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Pinned to the release Liana builds with.
+[dependencies]
+bitcoin = "=0.32.5"
+bipqr = { path = "../..", default-features = false, features = ["bitcoin_0_32"] }
+
+[[bin]]
+name = "roundtrip"
+path = "../shared/roundtrip.rs"

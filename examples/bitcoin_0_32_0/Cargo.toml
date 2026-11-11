@@ -1,0 +1,14 @@
+[package]
+name = "bipqr-example-bitcoin-0-32-0"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Pinned to the oldest supported release, the floor bipqr declares.
+[dependencies]
+bitcoin = "=0.32.0"
+bipqr = { path = "../..", default-features = false, features = ["bitcoin_0_32"] }
+
+[[bin]]
+name = "roundtrip"
+path = "../shared/roundtrip.rs"
