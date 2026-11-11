@@ -1,0 +1,53 @@
+{
+  "vectors": [
+    {
+      "name": "nonce_preparation_request",
+      "description": "Nonce Preparation request for a new or recomputed session: SESSION_ID present (PRESENCE 0x01 then 4 bytes of 0x51), SESSION_REF absent (PRESENCE 0x00), DESCRIPTOR absent (PRESENCE 0x00), MAX_INPUTS 2 (4 bytes big-endian), DERIVATION_PATH m/86'/1'/0'/0/3 (CHILD_COUNT 5 and five 4-byte big-endian children), START 0 (4 bytes big-endian) and END 1 (PRESENCE 0x01 then 4 bytes big-endian).",
+      "direction": "request",
+      "hex": "424950585858010600010151515151000000000002058000005680000001800000000000000000000003000000000100000001",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_request_with_session_ref",
+      "description": "Nonce Preparation request extending a held session: SESSION_ID present (PRESENCE 0x01 then 4 bytes of 0x51), SESSION_REF present (PRESENCE 0x01 then 4 bytes of 0x52), DESCRIPTOR absent (PRESENCE 0x00), MAX_INPUTS 2 (4 bytes big-endian), DERIVATION_PATH m/86'/1'/0'/0/3, START 2 and END 3 (PRESENCE 0x01 then 4 bytes big-endian).",
+      "direction": "request",
+      "hex": "42495058585801060001015151515101525252520000000002058000005680000001800000000000000000000003000000020100000003",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_request_with_descriptor",
+      "description": "Nonce Preparation request for a signer whose sessions depend on the descriptor: SESSION_ID present (PRESENCE 0x01 then 4 bytes of 0x51), SESSION_REF absent (PRESENCE 0x00), DESCRIPTOR present (PRESENCE 0x01) with DESCRIPTOR_ALIAS \"main\", DESCRIPTOR present (PRESENCE 0x01) as a BIP-388 wallet policy (FORM 0x02) with KEYS COUNT 2, \"[00000000/86h/1h/0h]xpub\" and \"[11111111/86h/1h/0h]xpub\", and POLICY \"tr(musig(@0,@1)/**)\", POR absent (PRESENCE 0x00), then MAX_INPUTS 2, DERIVATION_PATH m/86'/1'/0'/0/3, START 0 and END 1 (PRESENCE 0x01 then 4 bytes big-endian).",
+      "direction": "request",
+      "hex": "4249505858580106000101515151510001046d61696e010202185b30303030303030302f3836682f31682f30685d78707562185b31313131313131312f3836682f31682f30685d78707562137472286d757369672840302c4031292f2a2a290000000002058000005680000001800000000000000000000003000000000100000001",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_request_without_end",
+      "description": "Nonce Preparation request for a single key expression: SESSION_ID present (PRESENCE 0x01 then 4 bytes of 0x51), SESSION_REF absent (PRESENCE 0x00), DESCRIPTOR absent (PRESENCE 0x00), MAX_INPUTS 2 (4 bytes big-endian), DERIVATION_PATH m/86'/1'/0'/0/3, START 3 (4 bytes big-endian) and END absent (PRESENCE 0x00), so only key expression 3 is requested.",
+      "direction": "request",
+      "hex": "4249505858580106000101515151510000000000020580000056800000018000000000000000000000030000000300",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_request_without_session_id",
+      "description": "Nonce Preparation request leaving the session id to the signer: SESSION_ID absent (PRESENCE 0x00), the signer draws one and initializes a new session, SESSION_REF absent (PRESENCE 0x00), DESCRIPTOR absent (PRESENCE 0x00), MAX_INPUTS 2 (4 bytes big-endian), DERIVATION_PATH m/86'/1'/0'/0/3, START 0 and END 1 (PRESENCE 0x01 then 4 bytes big-endian).",
+      "direction": "request",
+      "hex": "4249505858580106000100000000000002058000005680000001800000000000000000000003000000000100000001",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_response_new_session",
+      "description": "Nonce Preparation ok response from a newly initialized session, answering a request with MAX_INPUTS 2, START 0 and END 1: SESSION_ID present (PRESENCE 0x01 then 4 bytes of 0x51), SESSION_REF present (PRESENCE 0x01 then 4 bytes of 0x52), then NONCES with COUNT 4 (two key expressions times two inputs), each a 66-byte NONCE without a LENGTH prefix, ordered by key expression index then input index: expression 0 input 0 with NONCE of 0x22, expression 0 input 1 with NONCE of 0x55, expression 1 input 0 with NONCE of 0x66, and expression 1 input 1 with NONCE of 0x77.",
+      "direction": "response",
+      "hex": "424950585858018600010151515151015252525204222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+      "decode_only": false
+    },
+    {
+      "name": "nonce_preparation_response_existing_session",
+      "description": "Nonce Preparation ok response from a session the signer already held, answering a request with MAX_INPUTS 2, START 2 and END 3: SESSION_ID absent (PRESENCE 0x00), SESSION_REF absent (PRESENCE 0x00), then NONCES with COUNT 4, each a 66-byte NONCE without a LENGTH prefix: expression 2 input 0 with NONCE of 0x22, expression 2 input 1 with NONCE of 0x55, expression 3 input 0 with NONCE of 0x66, and expression 3 input 1 with NONCE of 0x77.",
+      "direction": "response",
+      "hex": "42495058585801860001000004222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777",
+      "decode_only": false
+    }
+  ]
+}

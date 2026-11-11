@@ -1,0 +1,19 @@
+[package]
+name = "bipqr-ll"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.88"
+description = "Dependency-free codec for the draft QR signing protocol"
+license = "MIT"
+authors = ["pythcoiner"]
+repository = "https://github.com/pythcoiner/bipqr"
+
+[lib]
+path = "src/lib.rs"
+
+[dev-dependencies]
+serde_json = "1.0"
+
+[features]
+default = []
+ffi = []
