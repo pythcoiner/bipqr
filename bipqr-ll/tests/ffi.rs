@@ -1,26 +1,27 @@
 #![cfg(feature = "ffi")]
+// The helpers are unsafe fns over raw C pointers; their whole body is the unsafe context.
+#![allow(unsafe_op_in_unsafe_fn)]
 
 mod common;
 
 use std::{
-    ffi::{c_char, CStr, CString},
+    ffi::{CStr, CString, c_char},
     ptr, slice,
 };
 
 use bipqr_ll::{
-    encode, encode_request,
+    ErrorInfo, Invalid, Message, MessageType, REQUEST_ID_LEN, Request, RequestId, Response,
+    SignResponseKind, encode, encode_request,
     ffi::{
-        bipqr_buf_free, bipqr_request_decode, bipqr_request_free, bipqr_response_encode, types,
-        Error, OK,
+        Error, OK, bipqr_buf_free, bipqr_request_decode, bipqr_request_free, bipqr_response_encode,
+        types,
     },
     request,
     response::{self, SpScope},
     types::{DerivationPath, ExtendedKey, Fingerprint, PublicKey},
-    ErrorInfo, Invalid, Message, MessageType, Request, RequestId, Response, SignResponseKind,
-    REQUEST_ID_LEN,
 };
 
-use common::{bip380, bip388, sp_foreign_scan_keys, sp_keys, FOREIGN_SCAN_KEY};
+use common::{FOREIGN_SCAN_KEY, bip380, bip388, sp_foreign_scan_keys, sp_keys};
 
 const ID: [u8; REQUEST_ID_LEN] = [42; REQUEST_ID_LEN];
 

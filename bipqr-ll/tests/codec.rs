@@ -1,11 +1,10 @@
 mod common;
 
 use bipqr_ll::{
-    decode, encode, encode_request, encode_response, reader, request,
+    Invalid, MAX_DESCRIPTOR_ALIAS, Message, MessageType, REQUEST_ID_LEN, Request, RequestId,
+    Response, SignResponseKind, decode, encode, encode_request, encode_response, reader, request,
     response::{self, SpScope},
     types::{Fingerprint, SCHNORR_SIGNATURE_LEN},
-    Invalid, Message, MessageType, Request, RequestId, Response, SignResponseKind,
-    MAX_DESCRIPTOR_ALIAS, REQUEST_ID_LEN,
 };
 
 use common::{
@@ -407,13 +406,12 @@ fn every_error_message_is_terminated_and_uniquely_coded() {
 
 mod sp_keys {
     use bipqr_ll::{
-        decode, encode, encode_request, reader, request,
-        types::{DerivationPath, SecretKey, SECRET_KEY_LEN},
-        Message, Request,
+        Message, Request, decode, encode, encode_request, reader, request,
+        types::{DerivationPath, SECRET_KEY_LEN, SecretKey},
     };
 
     use crate::{
-        common::{sp_foreign_scan_keys, sp_keys, sp_keys_with, FOREIGN_SCAN_KEY},
+        common::{FOREIGN_SCAN_KEY, sp_foreign_scan_keys, sp_keys, sp_keys_with},
         id,
     };
 
@@ -895,11 +893,11 @@ fn a_second_share_or_proof_for_a_scan_key_is_refused() {
 
 mod get_info_response {
     use bipqr_ll::{
-        decode, encode, encode_request, encode_response, reader, request, response,
-        types::Fingerprint, Invalid, Message, Request, Response, MAX_DESCRIPTOR_ALIAS,
+        Invalid, MAX_DESCRIPTOR_ALIAS, Message, Request, Response, decode, encode, encode_request,
+        encode_response, reader, request, response, types::Fingerprint,
     };
 
-    use crate::{id, HEADER_LEN};
+    use crate::{HEADER_LEN, id};
 
     const VENDOR: &str = "bip";
     const MODEL: &str = "bip-signer";

@@ -1,7 +1,7 @@
 use bipqr_ll::{
-    decode, encode, encode_request, encode_response, reader, request, response,
+    Invalid, Message, MessageType, Request, RequestId, Response, decode, encode, encode_request,
+    encode_response, reader, request, response,
     types::{DerivationPath, Fingerprint},
-    Invalid, Message, MessageType, Request, RequestId, Response,
 };
 
 const ID: RequestId = RequestId([0x12, 0x34]);

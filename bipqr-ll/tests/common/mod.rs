@@ -4,8 +4,8 @@
 use bipqr_ll::{
     request, response,
     types::{
-        DerivationPath, ExtendedKey, Fingerprint, PublicKey, SecretKey, EXTENDED_KEY_LEN,
-        PUBLIC_KEY_LEN, SECRET_KEY_LEN,
+        DerivationPath, EXTENDED_KEY_LEN, ExtendedKey, Fingerprint, PUBLIC_KEY_LEN, PublicKey,
+        SECRET_KEY_LEN, SecretKey,
     },
 };
 

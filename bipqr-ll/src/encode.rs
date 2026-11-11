@@ -1,11 +1,10 @@
 use alloc::{string::String, vec::Vec};
 
 use crate::{
-    request, response, sp,
+    DIRECTION_REQUEST, DIRECTION_RESPONSE, ErrorInfo, Invalid, MAGIC, MAX_DESCRIPTOR_ALIAS,
+    MessageType, REQUEST_ID_LEN, Request, RequestId, Response, STATUS_ERROR, STATUS_OK,
+    SignResponseKind, VERSION, request, response, sp,
     types::{DerivationPath, ExtendedKey, PublicKey, TAP_LEAF_HASH_LEN},
-    ErrorInfo, Invalid, MessageType, Request, RequestId, Response, SignResponseKind,
-    DIRECTION_REQUEST, DIRECTION_RESPONSE, MAGIC, MAX_DESCRIPTOR_ALIAS, REQUEST_ID_LEN,
-    STATUS_ERROR, STATUS_OK, VERSION,
 };
 
 pub const MAX_PATCH: u32 = 0x00ff_ffff;

@@ -7,6 +7,10 @@
 //! No entry point may panic. `no_std` has no unwinding, so a panic would reach the
 //! firmware's handler instead of returning a code.
 
+// Every unsafe fn here is one body operating on raw C pointers, so treat the whole
+// body as the unsafe context rather than wrapping each pointer read.
+#![allow(unsafe_op_in_unsafe_fn)]
+
 mod owned;
 mod read;
 pub mod types;
@@ -52,7 +56,7 @@ error_display!(Error);
 /// # Safety
 /// `bytes` must be readable for `len`, and `out` writable. `err` may be null; when it
 /// is not, a failure writes a static message to it.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bipqr_request_decode(
     bytes: *const u8,
     len: usize,
@@ -82,7 +86,7 @@ pub unsafe extern "C" fn bipqr_request_decode(
 ///
 /// # Safety
 /// `request` must come from `bipqr_request_decode` and must not be freed twice.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bipqr_request_free(request: *const types::Request) {
     if request.is_null() {
         return;
@@ -95,7 +99,7 @@ pub unsafe extern "C" fn bipqr_request_free(request: *const types::Request) {
 /// # Safety
 /// `response` must be a fully initialized response whose pointers are valid for
 /// reading, and `out` must be writable. `err` may be null.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bipqr_response_encode(
     response: *const types::Response,
     out: *mut types::Buf,
@@ -125,7 +129,7 @@ pub unsafe extern "C" fn bipqr_response_encode(
 ///
 /// # Safety
 /// `buf` must come from this crate and must not be freed twice.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bipqr_buf_free(buf: types::Buf) {
     if buf.ptr.is_null() {
         return;

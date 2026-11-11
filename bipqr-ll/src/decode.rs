@@ -1,11 +1,11 @@
 use alloc::{string::String, vec::Vec};
 
 use crate::{
+    DIRECTION_RESPONSE, ErrorInfo, Invalid, MAGIC, MAX_DESCRIPTOR_ALIAS, Message, MessageType,
+    Request, RequestId, Response, STATUS_ERROR, SignResponseKind, TYPE_MASK,
     reader::{self, Reader},
     request, response, sp,
     types::{DerivationPath, ExtendedKey, Fingerprint, PublicKey, SecretKey},
-    ErrorInfo, Invalid, Message, MessageType, Request, RequestId, Response, SignResponseKind,
-    DIRECTION_RESPONSE, MAGIC, MAX_DESCRIPTOR_ALIAS, STATUS_ERROR, TYPE_MASK,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]

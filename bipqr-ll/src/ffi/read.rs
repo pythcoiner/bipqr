@@ -5,13 +5,13 @@ use alloc::{
     string::{String, ToString},
     vec::Vec,
 };
-use core::ffi::{c_char, CStr};
+use core::ffi::{CStr, c_char};
 
 use crate::{
-    ffi::{types, Error},
+    MessageType, RequestId, Response, SignResponseKind,
+    ffi::{Error, types},
     response,
     types::{ExtendedKey, Fingerprint, PublicKey},
-    MessageType, RequestId, Response, SignResponseKind,
 };
 
 /// # Safety

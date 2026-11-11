@@ -4,11 +4,11 @@
 use core::{ffi::c_char, ptr};
 
 use crate::{
+    REQUEST_ID_LEN,
     types::{
         DLEQ_PROOF_LEN, EXTENDED_KEY_LEN, FINGERPRINT_LEN, MUSIG_PARTIAL_SIG_LEN,
         MUSIG_PUB_NONCE_LEN, PUBLIC_KEY_LEN, SECRET_KEY_LEN, TAP_LEAF_HASH_LEN,
     },
-    REQUEST_ID_LEN,
 };
 
 /// A borrowed run of `len` items. A null `ptr` means the field is absent, which is

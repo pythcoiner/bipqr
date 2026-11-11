@@ -1,9 +1,8 @@
 use alloc::{string::String, vec::Vec};
 
 use crate::{
-    decode,
+    Invalid, MessageType, SignResponseKind, decode,
     types::{DerivationPath, Fingerprint, SecretKey},
-    Invalid, MessageType, SignResponseKind,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]

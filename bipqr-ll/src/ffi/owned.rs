@@ -9,10 +9,10 @@ use alloc::{boxed::Box, ffi::CString, string::String, vec::Vec};
 use core::{ffi::c_char, ptr};
 
 use crate::{
-    ffi::{types, Error},
+    Request,
+    ffi::{Error, types},
     request,
     types::DerivationPath,
-    Request,
 };
 
 #[repr(C)]

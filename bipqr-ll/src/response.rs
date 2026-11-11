@@ -1,12 +1,11 @@
 use alloc::{string::String, vec::Vec};
 
 use crate::{
-    sp,
+    Invalid, MAX_DESCRIPTOR_ALIAS, MessageType, sp,
     types::{
-        ExtendedKey, Fingerprint, PublicKey, DLEQ_PROOF_LEN, MUSIG_PARTIAL_SIG_LEN,
-        MUSIG_PUB_NONCE_LEN, SCHNORR_SIGNATURE_LEN,
+        DLEQ_PROOF_LEN, ExtendedKey, Fingerprint, MUSIG_PARTIAL_SIG_LEN, MUSIG_PUB_NONCE_LEN,
+        PublicKey, SCHNORR_SIGNATURE_LEN,
     },
-    Invalid, MessageType, MAX_DESCRIPTOR_ALIAS,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]

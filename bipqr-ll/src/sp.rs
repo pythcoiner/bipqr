@@ -1,9 +1,9 @@
 use alloc::collections::BTreeSet;
 
 use crate::{
+    Invalid,
     response::{SignatureEntry, SpScope},
     types::PUBLIC_KEY_LEN,
-    Invalid,
 };
 
 /// The `INPUT_INDEX` a global entry carries on the wire.
