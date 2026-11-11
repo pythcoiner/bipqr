@@ -1,0 +1,58 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.88
+          components: rustfmt, clippy
+      - name: lint
+        run: ./contrib/lint.sh
+
+  tests:
+    needs: linter
+    strategy:
+      matrix:
+        toolchain:
+          - 1.88
+          - nightly
+        os:
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: tests
+        run: ./contrib/test.sh
+
+  build:
+    needs: tests
+    strategy:
+      matrix:
+        toolchain:
+          - 1.88
+        os:
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: build
+        run: ./contrib/build.sh
