@@ -127,7 +127,7 @@ fn address_verification_messages() -> Vec<(&'static str, Message)> {
             "address_verification_request",
             request(request::Body::VerifyAddress(request::VerifyAddress {
                 descriptor_alias: "main".to_string(),
-                derivation_path: path("m/84'/1'/0'/0/7"),
+                derivation_path: path("m/7"),
                 address: Some("bc1qxyz".to_string()),
                 descriptor: Some(bip380()),
                 proof: Some(vec![0x5a; 4]),
