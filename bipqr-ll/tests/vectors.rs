@@ -456,10 +456,26 @@ fn error_messages() -> Vec<(&'static str, Message)> {
             })),
         ),
         (
+            "error_response_unsupported_operation",
+            response(response::Body::Error(response::ErrorBody {
+                message_type: protocol::MessageType::AddressVerification,
+                error: response::Error::UnsupportedOperation,
+                message: "silent payments not supported".to_string(),
+            })),
+        ),
+        (
+            "error_response_network_mismatch",
+            response(response::Body::Error(response::ErrorBody {
+                message_type: protocol::MessageType::Signing,
+                error: response::Error::NetworkMismatch,
+                message: "wrong network".to_string(),
+            })),
+        ),
+        (
             "error_response_reserved_code",
             response(response::Body::Error(response::ErrorBody {
                 message_type: protocol::MessageType::GetKeys,
-                error: response::Error::Unknown(0x0f),
+                error: response::Error::Unknown(0x11),
                 message: "code added after version 1".to_string(),
             })),
         ),

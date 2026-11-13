@@ -301,7 +301,7 @@ impl Builder<'_> {
     }
 
     fn error(&mut self) -> response::Error {
-        match self.u8() % 16 {
+        match self.u8() % 18 {
             0 => response::Error::UserDeclined,
             1 => response::Error::UnsupportedVersion,
             2 => response::Error::MalformedRequest,
@@ -316,7 +316,9 @@ impl Builder<'_> {
             11 => response::Error::PrivateKeyExportRefused,
             12 => response::Error::MusigSession,
             13 => response::Error::AlreadyRegistered,
-            14 => response::Error::Vendor,
+            14 => response::Error::UnsupportedOperation,
+            15 => response::Error::NetworkMismatch,
+            16 => response::Error::Vendor,
             _ => response::Error::Unknown(self.u8()),
         }
     }

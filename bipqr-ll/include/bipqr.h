@@ -109,7 +109,7 @@ enum bipqr_release_flag {
 };
 
 /* Open: a value outside this list passes through as an unknown code, and must sit in
- * 0x0f..=0xfe to encode. */
+ * 0x11..=0xfe to encode. */
 enum bipqr_response_error {
     BIPQR_RESPONSE_ERROR_USER_DECLINED = 0x01,
     BIPQR_RESPONSE_ERROR_UNSUPPORTED_VERSION = 0x02,
@@ -125,6 +125,8 @@ enum bipqr_response_error {
     BIPQR_RESPONSE_ERROR_PRIVATE_KEY_EXPORT_REFUSED = 0x0c,
     BIPQR_RESPONSE_ERROR_MUSIG_SESSION = 0x0d,
     BIPQR_RESPONSE_ERROR_ALREADY_REGISTERED = 0x0e,
+    BIPQR_RESPONSE_ERROR_UNSUPPORTED_OPERATION = 0x0f,
+    BIPQR_RESPONSE_ERROR_NETWORK_MISMATCH = 0x10,
     BIPQR_RESPONSE_ERROR_VENDOR = 0xff
 };
 

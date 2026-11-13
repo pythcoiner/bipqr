@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub const MAX_PATCH: u32 = 0x00ff_ffff;
-const ERROR_CODE_FUTURE_MIN: u8 = 0x0f;
+const ERROR_CODE_FUTURE_MIN: u8 = 0x11;
 const ERROR_CODE_FUTURE_MAX: u8 = 0xfe;
 const CAPABILITIES_MASK: u32 =
     0x0000_000f | response::Capabilities::NONCE_CACHE | response::Capabilities::PSBT_TRIMMING;

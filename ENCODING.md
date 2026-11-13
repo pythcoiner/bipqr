@@ -169,6 +169,11 @@ can advertise capabilities an older coordinator does not know. Bit 31 (the MSB) 
 be `0` in this version; a `1` signals that the signer exposes capabilities beyond
 this bitfield and the coordinator should upgrade to interpret them.
 
+A signer MUST answer a request needing a capability it does not advertise with
+`ERROR` `0x0F` (unsupported operation), e.g. a Taproot miniscript descriptor
+without bit 1, a silent payment request without bit 2, a `musig()` key without
+bit 3, or a Nonce Preparation request without bit 4.
+
 ### Encoding
 
 A message is encoded as follows:
@@ -263,16 +268,25 @@ Global error table:
 | 0x0C      | Private key export refused (Get Keys)                |
 | 0x0D      | Session missing, consumed or mismatched              |
 | 0x0E      | Descriptor alias already registered                  |
-| 0x0F–0xFE | Reserved for future standard codes                   |
+| 0x0F      | Unsupported operation                                |
+| 0x10      | Network mismatch                                     |
+| 0x11–0xFE | Reserved for future standard codes                   |
 | 0xFF      | Vendor-specific (meaning carried by `ERROR_MESSAGE`) |
 +-----------+------------------------------------------------------+
 ```
 
-`0x00` is reserved and MUST NOT be sent. `0x01`–`0x0E` are the standard codes above;
-`0x0F`–`0xFE` are reserved for future standard codes. `0xFF` is vendor-specific: the
+`0x00` is reserved and MUST NOT be sent. `0x01`–`0x10` are the standard codes above;
+`0x11`–`0xFE` are reserved for future standard codes. `0xFF` is vendor-specific: the
 code alone is not meaningful, so `ERROR_MESSAGE` carries the description. A receiver
 MUST NOT reject an unrecognized `ERROR`; `STATUS` = `1` already denotes an error,
 and it SHOULD fall back to `ERROR_MESSAGE`.
+
+A signer MUST answer `0x0F` to a request whose operation, or a capability it
+needs, the signer does not support: a known `TYPE` it does not implement, or a
+request needing a capability bit it does not advertise (see `CAPABILITIES`).
+A signer MUST answer `0x10` to a request whose descriptor, keys, address or `PSBT`
+are for a network it does not sign for (not in its Get Info `NETWORKS`), or for
+another network than the one it is set to.
 
 #### Body
 
@@ -332,6 +346,8 @@ does not know.
 
 Bits 0 and 5–7 are reserved: they MUST be `0` when written, and a reader MUST
 ignore them.
+A signer MUST answer a request for a network it does not sign for with `ERROR`
+`0x10` (network mismatch).
 
 `MAX_MESSAGE`: 4-byte big-endian unsigned integer, the size in bytes of the largest
 complete `MESSAGE` the signer accepts.
@@ -438,7 +454,8 @@ A silent payment address is verified with a `DESCRIPTOR` of `FORM` `0x03`
 - `ADDRESS`: the expected silent payment address.
 
 The answer is a `URI` holding the address, or the error `0x08` when the address
-differs from `ADDRESS`. It requires capability bit 2.
+differs from `ADDRESS`. It requires capability bit 2: a signer without it MUST
+answer with `ERROR` `0x0F`.
 
 **Ok response** (`TYPE` = `0x04`, response):
 
@@ -628,9 +645,10 @@ refused with `ERROR` `0x0D`.
 
 ### Nonce Preparation
 
-This operation requires capability bit 4 and has `TYPE` `0x06`. It prepares public
-nonces for later Signing exchanges, the nonce cache BIP draft being one use. No
-root, secret nonce or other secret material may appear in these messages.
+This operation requires capability bit 4 and has `TYPE` `0x06`. A signer without
+bit 4 MUST answer it with `ERROR` `0x0F`. It prepares public nonces for later
+Signing exchanges, the nonce cache BIP draft being one use. No root, secret nonce
+or other secret material may appear in these messages.
 
 **Request:**
 
@@ -748,7 +766,8 @@ Machine-checkable vectors accompany this specification, in `test_vectors/`:
   for a new session (`SESSION_ID` and `SESSION_REF` present) and for an existing
   one (both absent).
 - `errors.json`: error responses (`STATUS` = `1`), standard and vendor codes,
-  including `0x0D` (session) and `0x0E` (alias already registered).
+  including `0x0D` (session), `0x0E` (alias already registered), `0x0F`
+  (unsupported operation) and `0x10` (network mismatch).
 - `versioning.json`: forward compatibility, a message whose `VERSION` is above 1
   and which carries trailing bytes a version-1 parser does not know.
 - `invalid.json`: malformed messages a reader MUST reject, each a vector above

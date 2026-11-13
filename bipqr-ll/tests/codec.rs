@@ -585,6 +585,8 @@ fn every_error_code_round_trips() {
         (response::Error::PrivateKeyExportRefused, 0x0c),
         (response::Error::MusigSession, 0x0d),
         (response::Error::AlreadyRegistered, 0x0e),
+        (response::Error::UnsupportedOperation, 0x0f),
+        (response::Error::NetworkMismatch, 0x10),
         (response::Error::Vendor, 0xff),
     ] {
         assert_eq!(u8::from(error), code);
@@ -597,7 +599,7 @@ fn every_error_code_round_trips() {
             Err(encode::Error::ErrorCodeOutOfRange(code))
         );
     }
-    let response = error_response(response::Error::Unknown(0x0f));
+    let response = error_response(response::Error::Unknown(0x11));
     let bytes = encode_response(&response).unwrap();
     assert_eq!(decode(&bytes), Ok(Message::Response(response)));
 }
