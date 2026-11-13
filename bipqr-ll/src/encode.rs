@@ -78,6 +78,7 @@ pub fn encode_request(request: &Request) -> Result<Vec<u8>, Error> {
 }
 
 pub fn encode_response(response: &Response) -> Result<Vec<u8>, Error> {
+    response.validate()?;
     let status = matches!(response.body, response::Body::Error(_));
     let mut out = envelope(response.body.message_type(), true, status, response.id);
     encode_response_body(&mut out, &response.body)?;

@@ -90,6 +90,7 @@ unsafe fn descriptor(view: &types::Descriptor) -> request::Descriptor {
 unsafe fn request_body(view: &types::Request) -> request::Body {
     let message_type = MessageType::try_from(view.message_type).expect("a known message type");
     match message_type {
+        MessageType::UnreadableRequest => panic!("a request carries the unreadable request type"),
         MessageType::GetInfo => request::Body::GetInfo,
         MessageType::GetKeys => request::Body::GetKeys(request::GetKeys {
             keys: unsafe { view.body.get_keys.keys.as_slice() }

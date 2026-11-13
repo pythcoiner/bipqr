@@ -1021,6 +1021,52 @@ fn error_response_encodes() {
     }
 }
 
+fn unreadable_request_view(id: [u8; REQUEST_ID_LEN], is_error: bool) -> types::Response {
+    types::Response {
+        id,
+        ..response_view(
+            MessageType::UnreadableRequest.value(),
+            is_error,
+            types::ResponseBody {
+                error: types::ErrorBody {
+                    error: response::Error::MalformedRequest.value(),
+                    message: c"request header is unreadable".as_ptr(),
+                },
+            },
+        )
+    }
+}
+
+#[test]
+fn unreadable_request_encodes() {
+    unsafe {
+        let view = unreadable_request_view(RequestId::UNREADABLE_REQUEST.0, true);
+        assert_eq!(
+            encoded(&view),
+            Response::unreadable_request("request header is unreadable".to_string())
+        );
+    }
+}
+
+#[test]
+fn encode_rejects_an_unreadable_request_with_another_id() {
+    unsafe {
+        let view = unreadable_request_view(ID, true);
+        assert_eq!(
+            encode_failure(&view),
+            Invalid::UnreadableRequestId.info_owned()
+        );
+    }
+}
+
+#[test]
+fn encode_rejects_an_ok_unreadable_request() {
+    unsafe {
+        let view = unreadable_request_view(RequestId::UNREADABLE_REQUEST.0, false);
+        assert_eq!(encode_failure(&view), Error::UnknownTag.info_owned());
+    }
+}
+
 #[test]
 fn decode_rejects_null_pointers() {
     unsafe {

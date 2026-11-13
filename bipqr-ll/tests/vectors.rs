@@ -479,6 +479,12 @@ fn error_messages() -> Vec<(&'static str, Message)> {
                 message: "code added after version 1".to_string(),
             })),
         ),
+        (
+            "error_response_unreadable_request",
+            Message::Response(protocol::Response::unreadable_request(
+                "request header is unreadable".to_string(),
+            )),
+        ),
     ]
 }
 
@@ -502,7 +508,18 @@ fn versioning_messages() -> Vec<(&'static str, Message)> {
 fn invalid_errors() -> Vec<(&'static str, Error)> {
     vec![
         ("invalid_magic", Error::InvalidMagic),
-        ("invalid_type_reserved", Error::UnknownMessageType(0x00)),
+        (
+            "invalid_unreadable_type_in_request",
+            Error::UnreadableRequestType,
+        ),
+        (
+            "invalid_unreadable_type_in_ok_response",
+            Error::UnreadableRequestType,
+        ),
+        (
+            "invalid_unreadable_type_request_id",
+            Error::Invalid(Invalid::UnreadableRequestId),
+        ),
         ("invalid_type_unknown", Error::UnknownMessageType(0x07)),
         ("invalid_status_on_request", Error::ErrorStatusOnRequest),
         ("invalid_truncated", Error::Read(reader::Error::Truncated)),

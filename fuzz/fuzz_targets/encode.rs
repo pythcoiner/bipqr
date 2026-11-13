@@ -130,6 +130,7 @@ impl Builder<'_> {
     fn request(&mut self) -> Request {
         let id = RequestId(self.array());
         let body = match self.message_type() {
+            MessageType::UnreadableRequest => unreachable!("message_type never draws it"),
             MessageType::GetInfo => request::Body::GetInfo,
             MessageType::GetKeys => request::Body::GetKeys(request::GetKeys {
                 keys: self.vec(Self::key_request),
@@ -210,12 +211,17 @@ impl Builder<'_> {
         let id = RequestId(self.array());
         let body = if self.u8().is_multiple_of(8) {
             response::Body::Error(ErrorBody {
-                message_type: self.message_type(),
+                message_type: if self.u8().is_multiple_of(8) {
+                    MessageType::UnreadableRequest
+                } else {
+                    self.message_type()
+                },
                 error: self.error(),
                 message: self.string(),
             })
         } else {
             match self.message_type() {
+                MessageType::UnreadableRequest => unreachable!("message_type never draws it"),
                 MessageType::GetInfo => response::Body::Info(self.info()),
                 MessageType::GetKeys => response::Body::Keys(response::Keys {
                     keys: self.vec(|builder| ExtendedKey(builder.array())),

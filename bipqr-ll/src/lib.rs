@@ -62,7 +62,7 @@ pub mod response;
 pub mod sp;
 pub mod types;
 
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 
 const MAGIC: &[u8; 6] = b"BIPXXX";
 const VERSION: u8 = 1;
@@ -87,6 +87,7 @@ pub enum Invalid {
     ZeroMaxInputs,
     ReversedExpressionRange,
     SessionRefWithoutId,
+    UnreadableRequestId,
 }
 
 impl Invalid {
@@ -120,6 +121,9 @@ impl Invalid {
             Self::SessionRefWithoutId => {
                 error_info!(509, "nonce cache session ref requires a session id")
             }
+            Self::UnreadableRequestId => {
+                error_info!(510, "unreadable request reply must use request id 0x0000")
+            }
         }
     }
 }
@@ -128,6 +132,12 @@ error_display!(Invalid);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RequestId(pub [u8; REQUEST_ID_LEN]);
+
+impl RequestId {
+    /// The id of the reply to a request whose own id could not be read. A coordinator
+    /// should not choose it.
+    pub const UNREADABLE_REQUEST: Self = Self([0; REQUEST_ID_LEN]);
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Request {
@@ -141,6 +151,30 @@ pub struct Response {
     pub body: response::Body,
 }
 
+impl Response {
+    /// The `MalformedRequest` error a signer answers to a request it cannot read far
+    /// enough to know its `REQUEST_ID` or its `TYPE`.
+    pub fn unreadable_request(message: String) -> Self {
+        Self {
+            id: RequestId::UNREADABLE_REQUEST,
+            body: response::Body::Error(response::ErrorBody {
+                message_type: MessageType::UnreadableRequest,
+                error: response::Error::MalformedRequest,
+                message,
+            }),
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), Invalid> {
+        if self.body.message_type() == MessageType::UnreadableRequest
+            && self.id != RequestId::UNREADABLE_REQUEST
+        {
+            return Err(Invalid::UnreadableRequestId);
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Message {
     Request(Request),
@@ -149,6 +183,9 @@ pub enum Message {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MessageType {
+    /// Only in an error response to `RequestId::UNREADABLE_REQUEST`, see
+    /// `Response::unreadable_request`.
+    UnreadableRequest,
     GetInfo,
     GetKeys,
     RegisterDescriptor,
@@ -166,6 +203,7 @@ impl MessageType {
 impl From<MessageType> for u8 {
     fn from(message_type: MessageType) -> Self {
         match message_type {
+            MessageType::UnreadableRequest => 0x00,
             MessageType::GetInfo => 0x01,
             MessageType::GetKeys => 0x02,
             MessageType::RegisterDescriptor => 0x03,
@@ -181,6 +219,7 @@ impl TryFrom<u8> for MessageType {
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
+            0x00 => Ok(Self::UnreadableRequest),
             0x01 => Ok(Self::GetInfo),
             0x02 => Ok(Self::GetKeys),
             0x03 => Ok(Self::RegisterDescriptor),

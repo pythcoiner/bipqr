@@ -22,6 +22,7 @@ pub unsafe fn response(view: &types::Response) -> Result<Response, Error> {
         response::Body::Error(error_body(message_type, &view.body.error)?)
     } else {
         match message_type {
+            MessageType::UnreadableRequest => return Err(Error::UnknownTag),
             MessageType::GetKeys => response::Body::Keys(keys(&view.body.keys)?),
             MessageType::RegisterDescriptor => {
                 response::Body::Registration(registration(&view.body.registration)?)

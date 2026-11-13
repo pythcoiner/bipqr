@@ -22,6 +22,7 @@ pub enum Error {
     ScanPathAndKey,
     NoScan,
     UnpairedSession,
+    UnreadableRequestType,
     Invalid(Invalid),
     Read(reader::Error),
 }
@@ -59,6 +60,9 @@ impl Error {
                     212,
                     "nonce preparation response carries only one of session id and ref"
                 )
+            }
+            Self::UnreadableRequestType => {
+                error_info!(213, "unreadable request type outside an error response")
             }
             Self::Invalid(error) => error.info(),
             Self::Read(inner) => inner.info(),
@@ -121,10 +125,16 @@ pub fn decode(bytes: &[u8]) -> Result<Message, Error> {
             id,
             body: request::Body::GetInfo,
         }),
-        (true, true, _) => Message::Response(Response {
-            id,
-            body: response::Body::Error(read_error_response(&mut reader, message_type)?),
-        }),
+        (true, true, _) => {
+            let response = Response {
+                id,
+                body: response::Body::Error(read_error_response(&mut reader, message_type)?),
+            };
+            response.validate()?;
+            Message::Response(response)
+        }
+        // after the error response arm, so only a request or an ok response reaches it
+        (_, _, MessageType::UnreadableRequest) => return Err(Error::UnreadableRequestType),
         (true, false, MessageType::GetKeys) => Message::Response(Response {
             id,
             body: response::Body::Keys(read_keys_response(&mut reader)?),

@@ -184,6 +184,34 @@ fn decode_rejects_the_reserved_message_type_seven() {
 }
 
 #[test]
+fn unreadable_request_round_trips() {
+    let response = Response::unreadable_request("request header is unreadable".to_string());
+    let bytes = encode_response(&response).unwrap();
+    assert_eq!(bytes[MSG_TYPE_OFFSET], 0xc0);
+    assert_eq!(bytes[MSG_TYPE_OFFSET + 1..HEADER_LEN], [0, 0]);
+    assert_eq!(decode(&bytes), Ok(Message::Response(response)));
+}
+
+#[test]
+fn encode_rejects_an_unreadable_request_with_another_id() {
+    let response = Response {
+        id: id(),
+        ..Response::unreadable_request("request header is unreadable".to_string())
+    };
+    assert_eq!(
+        encode_response(&response),
+        Err(encode::Error::Invalid(Invalid::UnreadableRequestId))
+    );
+}
+
+#[test]
+fn decode_rejects_the_unreadable_request_type_on_a_request() {
+    let mut bytes = encode_request(&get_keys_request()).unwrap();
+    bytes[MSG_TYPE_OFFSET] = 0x00;
+    assert_eq!(decode(&bytes), Err(decode::Error::UnreadableRequestType));
+}
+
+#[test]
 fn decode_rejects_an_unknown_key_kind() {
     let mut bytes = encode_request(&get_keys_request()).unwrap();
     bytes[FIRST_KEY_KIND_OFFSET] = 0x02;
@@ -350,6 +378,7 @@ fn every_error_message_is_terminated_and_uniquely_coded() {
         decode::Error::ScanPathAndKey,
         decode::Error::NoScan,
         decode::Error::UnpairedSession,
+        decode::Error::UnreadableRequestType,
     ];
     let encode_errors = [
         encode::Error::PathTooLong(0),
@@ -375,6 +404,7 @@ fn every_error_message_is_terminated_and_uniquely_coded() {
         Invalid::ZeroMaxInputs,
         Invalid::ReversedExpressionRange,
         Invalid::SessionRefWithoutId,
+        Invalid::UnreadableRequestId,
     ];
 
     let mut infos = Vec::new();
