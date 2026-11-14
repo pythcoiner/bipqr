@@ -121,6 +121,25 @@ fn register_descriptor_messages() -> Vec<(&'static str, Message)> {
     ]
 }
 
+fn unregister_descriptor_messages() -> Vec<(&'static str, Message)> {
+    vec![
+        (
+            "unregister_descriptor_request",
+            request(request::Body::UnregisterDescriptor(
+                request::UnregisterDescriptor {
+                    descriptor_alias: "main".to_string(),
+                },
+            )),
+        ),
+        (
+            "unregister_descriptor_response",
+            response(response::Body::Unregistered(response::Unregistered {
+                descriptor_alias: "main".to_string(),
+            })),
+        ),
+    ]
+}
+
 fn address_verification_messages() -> Vec<(&'static str, Message)> {
     vec![
         (
@@ -520,7 +539,7 @@ fn invalid_errors() -> Vec<(&'static str, Error)> {
             "invalid_unreadable_type_request_id",
             Error::Invalid(Invalid::UnreadableRequestId),
         ),
-        ("invalid_type_unknown", Error::UnknownMessageType(0x07)),
+        ("invalid_type_unknown", Error::UnknownMessageType(0x08)),
         ("invalid_status_on_request", Error::ErrorStatusOnRequest),
         ("invalid_truncated", Error::Read(reader::Error::Truncated)),
         ("invalid_key_kind", Error::UnknownKeyKind(0x02)),
@@ -566,6 +585,18 @@ fn invalid_errors() -> Vec<(&'static str, Error)> {
         ("invalid_form_unknown", Error::UnknownDescriptorForm(0x04)),
         (
             "invalid_alias_too_long",
+            Error::Read(reader::Error::StringTooLarge(33)),
+        ),
+        (
+            "invalid_unregister_descriptor_no_alias",
+            Error::Read(reader::Error::Truncated),
+        ),
+        (
+            "invalid_unregister_descriptor_status_on_request",
+            Error::ErrorStatusOnRequest,
+        ),
+        (
+            "invalid_unregister_descriptor_alias_too_long",
             Error::Read(reader::Error::StringTooLarge(33)),
         ),
         ("invalid_sp_keys_scan_path_and_key", Error::ScanPathAndKey),
@@ -707,6 +738,14 @@ fn register_descriptor_vectors() {
     check(
         include_str!("../../test_vectors/register_descriptor.json"),
         &register_descriptor_messages(),
+    );
+}
+
+#[test]
+fn unregister_descriptor_vectors() {
+    check(
+        include_str!("../../test_vectors/unregister_descriptor.json"),
+        &unregister_descriptor_messages(),
     );
 }
 

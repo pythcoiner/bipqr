@@ -2,7 +2,8 @@
 
 Rust implementation of the draft QR signing protocol: the byte encoding of the
 messages a coordinator and a signer exchange (Get Info, Get Keys, Register
-Descriptor, Address Verification, Signing, Nonce Preparation). The format is
+Descriptor, Address Verification, Signing, Nonce Preparation, Unregister
+Descriptor). The format is
 specified in [ENCODING.md](ENCODING.md); the encoding is transport agnostic, so
 framing (BBQR) and QR rendering are out of scope.
 

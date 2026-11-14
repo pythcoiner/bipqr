@@ -214,20 +214,21 @@ Bits (bit 7 is the MSB):
 `TYPE` values:
 
 ```
-+-------+----------------------+
-| Value | Type                 |
-+-------+----------------------+
-| 0x00  | Unreadable request   |
-| 0x01  | Get Info             |
-| 0x02  | Get Keys             |
-| 0x03  | Register Descriptor  |
-| 0x04  | Address Verification |
-| 0x05  | Signing              |
-| 0x06  | Nonce Preparation    |
-+-------+----------------------+
++-------+-----------------------+
+| Value | Type                  |
++-------+-----------------------+
+| 0x00  | Unreadable request    |
+| 0x01  | Get Info              |
+| 0x02  | Get Keys              |
+| 0x03  | Register Descriptor   |
+| 0x04  | Address Verification  |
+| 0x05  | Signing               |
+| 0x06  | Nonce Preparation     |
+| 0x07  | Unregister Descriptor |
++-------+-----------------------+
 ```
 
-Values `0x07`–`0x3F` are reserved. A parser MUST reject an unknown `TYPE`, and
+Values `0x08`–`0x3F` are reserved. A parser MUST reject an unknown `TYPE`, and
 MUST reject `STATUS` = `1` on a request (`DIRECTION` = `0`).
 
 `TYPE` `0x00` (unreadable request) is valid only in an error response whose
@@ -731,6 +732,33 @@ Entries are positional, ordered by key expression index then by input index: the
 nonce for key expression index `j` and input index `i` is entry
 (`j` minus the request's `START`) times its `MAX_INPUTS` plus `i`.
 
+### Unregister Descriptor
+
+**Request** (`TYPE` = `0x07`, request):
+
+`DESCRIPTOR_ALIAS`
+
+`DESCRIPTOR_ALIAS`: the alias whose registration the device removes. Mandatory.
+
+The signer MUST ask the user to confirm before it removes the registration, showing
+`DESCRIPTOR_ALIAS` and the descriptor registered under it. A declined request gets
+`ERROR` `0x01`, and an alias the signer does not hold gets `ERROR` `0x04`.
+
+A signer that never stores a registration, and only issues a `POR`, answers
+`ERROR` `0x0F`. This request cannot revoke a `POR`: the coordinator forgets it
+instead.
+
+**Ok response** (`TYPE` = `0x07`, response):
+
+`DESCRIPTOR_ALIAS`
+
+`DESCRIPTOR_ALIAS`: echoes the alias from the request.
+
+After an ok response the alias is no longer registered on the device: a later
+Register Descriptor status query for it answers `REGISTERED` `false`, and a later
+request naming it by `DESCRIPTOR_ALIAS` alone is refused with `ERROR` `0x04`, as
+for any alias the signer does not hold.
+
 ### Versioning
 
 `BODY` is encoded append-only: fields are ordered by the `VERSION` in which they
@@ -786,6 +814,7 @@ Machine-checkable vectors accompany this specification, in `test_vectors/`:
   a locked signer without `FINGERPRINT`.
 - `get_keys.json`: Get Keys request/response.
 - `register_descriptor.json`: Register Descriptor request/response, each `FORM`.
+- `unregister_descriptor.json`: Unregister Descriptor request/response.
 - `address_verification.json`: Address Verification request/response, including a
   silent payment address with the signer's own scan key (`SCAN_PATH`), the same
   with a `POR`, and a labelled one with a scan key it does not hold (`SCAN_KEY`).
@@ -808,13 +837,14 @@ Machine-checkable vectors accompany this specification, in `test_vectors/`:
   one change its `description` names: a bad `MAGIC`, a reserved or unknown `TYPE`,
   `FORM` and `KIND`, `TYPE` `0x00` on a request, an ok response or an error response
   with another `REQUEST_ID`, `STATUS` = `1` on a request, truncated input, an
-  invalid `PRESENCE`, `BOOL` or `STRING`, a `DESCRIPTOR_ALIAS` above 32 bytes, both
-  or neither of `SCAN_PATH` and `SCAN_KEY`, unpaired or duplicate silent payment
-  entries, a global one with an `INPUT_INDEX` other than `0`, signatures of the
-  wrong length, a Nonce Preparation request with `MAX_INPUTS` `0`, `START` above
-  `END` or `SESSION_REF` without `SESSION_ID`, a Nonce Preparation response with
-  only one of `SESSION_ID` and `SESSION_REF`, and a Get Info response with a
-  `MAX_ALIAS` above 32 or a `FINGERPRINT` while not ready.
+  invalid `PRESENCE`, `BOOL` or `STRING`, a `DESCRIPTOR_ALIAS` above 32 bytes, an
+  Unregister Descriptor request without its `DESCRIPTOR_ALIAS`, both or neither of
+  `SCAN_PATH` and `SCAN_KEY`, unpaired or duplicate silent payment entries, a global
+  one with an `INPUT_INDEX` other than `0`, signatures of the wrong length, a Nonce
+  Preparation request with `MAX_INPUTS` `0`, `START` above `END` or `SESSION_REF`
+  without `SESSION_ID`, a Nonce Preparation response with only one of `SESSION_ID`
+  and `SESSION_REF`, and a Get Info response with a `MAX_ALIAS` above 32 or a
+  `FINGERPRINT` while not ready.
 
 Every file holds one JSON object with a single `vectors` array:
 

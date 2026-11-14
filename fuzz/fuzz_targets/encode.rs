@@ -109,13 +109,14 @@ impl Builder<'_> {
     }
 
     fn message_type(&mut self) -> MessageType {
-        match self.u8() % 6 {
+        match self.u8() % 7 {
             0 => MessageType::GetInfo,
             1 => MessageType::GetKeys,
             2 => MessageType::RegisterDescriptor,
             3 => MessageType::AddressVerification,
             4 => MessageType::Signing,
-            _ => MessageType::NoncePreparation,
+            5 => MessageType::NoncePreparation,
+            _ => MessageType::UnregisterDescriptor,
         }
     }
 
@@ -165,6 +166,11 @@ impl Builder<'_> {
                 start: self.u32(),
                 end: self.option(Self::u32),
             }),
+            MessageType::UnregisterDescriptor => {
+                request::Body::UnregisterDescriptor(request::UnregisterDescriptor {
+                    descriptor_alias: self.alias(),
+                })
+            }
         };
         Request { id, body }
     }
@@ -255,6 +261,11 @@ impl Builder<'_> {
                             session_ref: builder.array(),
                         }),
                         nonces: self.vec(Self::array),
+                    })
+                }
+                MessageType::UnregisterDescriptor => {
+                    response::Body::Unregistered(response::Unregistered {
+                        descriptor_alias: self.alias(),
                     })
                 }
             }

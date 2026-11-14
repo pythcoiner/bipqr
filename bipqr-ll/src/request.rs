@@ -12,6 +12,7 @@ pub enum Body {
     VerifyAddress(VerifyAddress),
     Sign(Sign),
     PrepareNonces(PrepareNonces),
+    UnregisterDescriptor(UnregisterDescriptor),
     GetInfo,
 }
 
@@ -29,6 +30,7 @@ impl From<&Body> for MessageType {
             Body::VerifyAddress(_) => Self::AddressVerification,
             Body::Sign(_) => Self::Signing,
             Body::PrepareNonces(_) => Self::NoncePreparation,
+            Body::UnregisterDescriptor(_) => Self::UnregisterDescriptor,
             Body::GetInfo => Self::GetInfo,
         }
     }
@@ -83,6 +85,11 @@ pub struct RegisterDescriptor {
     pub descriptor_alias: String,
     // NOTE: `descriptor` being None means it's a registration check
     pub descriptor: Option<DescriptorBody>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnregisterDescriptor {
+    pub descriptor_alias: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

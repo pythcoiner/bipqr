@@ -177,10 +177,10 @@ fn decode_rejects_an_unknown_message_type() {
 }
 
 #[test]
-fn decode_rejects_the_reserved_message_type_seven() {
+fn decode_rejects_the_reserved_message_type_eight() {
     let mut bytes = encode_request(&get_keys_request()).unwrap();
-    bytes[MSG_TYPE_OFFSET] = 0x07;
-    assert_eq!(decode(&bytes), Err(decode::Error::UnknownMessageType(0x07)));
+    bytes[MSG_TYPE_OFFSET] = 0x08;
+    assert_eq!(decode(&bytes), Err(decode::Error::UnknownMessageType(0x08)));
 }
 
 #[test]
@@ -325,6 +325,48 @@ fn encode_rejects_an_oversized_descriptor_alias() {
             len: MAX_DESCRIPTOR_ALIAS + 1,
             max: MAX_DESCRIPTOR_ALIAS,
         })
+    );
+}
+
+#[test]
+fn encode_rejects_an_oversized_unregister_alias() {
+    let alias = "a".repeat(MAX_DESCRIPTOR_ALIAS + 1);
+    let too_long = Err(encode::Error::StringTooLong {
+        len: MAX_DESCRIPTOR_ALIAS + 1,
+        max: MAX_DESCRIPTOR_ALIAS,
+    });
+    let request = Request {
+        id: id(),
+        body: request::Body::UnregisterDescriptor(request::UnregisterDescriptor {
+            descriptor_alias: alias.clone(),
+        }),
+    };
+    assert_eq!(encode_request(&request), too_long);
+    let response = Response {
+        id: id(),
+        body: response::Body::Unregistered(response::Unregistered {
+            descriptor_alias: alias,
+        }),
+    };
+    assert_eq!(encode_response(&response), too_long);
+}
+
+#[test]
+fn decode_rejects_an_oversized_unregistered_alias() {
+    let response = Response {
+        id: id(),
+        body: response::Body::Unregistered(response::Unregistered {
+            descriptor_alias: "a".repeat(MAX_DESCRIPTOR_ALIAS),
+        }),
+    };
+    let mut bytes = encode_response(&response).unwrap();
+    bytes[HEADER_LEN] = (MAX_DESCRIPTOR_ALIAS + 1) as u8;
+    bytes.push(b'a');
+    assert_eq!(
+        decode(&bytes),
+        Err(decode::Error::Read(reader::Error::StringTooLarge(
+            MAX_DESCRIPTOR_ALIAS + 1
+        )))
     );
 }
 

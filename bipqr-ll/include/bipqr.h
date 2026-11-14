@@ -48,7 +48,8 @@ enum bipqr_message_type {
     BIPQR_MESSAGE_REGISTER_DESCRIPTOR = 0x03,
     BIPQR_MESSAGE_ADDRESS_VERIFICATION = 0x04,
     BIPQR_MESSAGE_SIGNING = 0x05,
-    BIPQR_MESSAGE_NONCE_PREPARATION = 0x06
+    BIPQR_MESSAGE_NONCE_PREPARATION = 0x06,
+    BIPQR_MESSAGE_UNREGISTER_DESCRIPTOR = 0x07
 };
 
 enum bipqr_capability {
@@ -298,6 +299,10 @@ typedef struct {
 
 typedef struct {
     const char *descriptor_alias;
+} bipqr_unregister_descriptor;
+
+typedef struct {
+    const char *descriptor_alias;
     bipqr_path derivation_path;
     const char *address;                      /* NULL when absent */
     const bipqr_descriptor_body *descriptor; /* NULL when absent */
@@ -331,6 +336,7 @@ typedef union {
     bipqr_verify_address verify_address;
     bipqr_sign sign;
     bipqr_prepare_nonces prepare_nonces;
+    bipqr_unregister_descriptor unregister_descriptor;
 } bipqr_request_body;
 
 typedef struct {
@@ -374,6 +380,11 @@ typedef struct {
     int8_t stored;       /* 0, 1 or BIPQR_ABSENT_BOOL */
     bipqr_bytes proof;
 } bipqr_registration;
+
+/* The alias is no longer registered once this is sent. */
+typedef struct {
+    const char *descriptor_alias;
+} bipqr_unregistered;
 
 typedef struct {
     const char *uri; /* BIP-321 payment URI for the verified address */
@@ -482,6 +493,7 @@ typedef union {
     bipqr_address_uri address_uri;
     bipqr_signed signed_body;
     bipqr_nonces_prepared nonces_prepared;
+    bipqr_unregistered unregistered;
     bipqr_info info;
     bipqr_error_body error;
 } bipqr_response_body;

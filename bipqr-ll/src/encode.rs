@@ -111,6 +111,9 @@ fn encode_request_body(out: &mut Vec<u8>, body: &request::Body) -> Result<(), Er
         request::Body::VerifyAddress(request) => encode_verify_address_request(out, request),
         request::Body::Sign(request) => encode_sign_request(out, request),
         request::Body::PrepareNonces(request) => encode_prepare_nonces(out, request),
+        request::Body::UnregisterDescriptor(request) => {
+            write_descriptor_alias(out, &request.descriptor_alias)
+        }
         request::Body::GetInfo => Ok(()),
     }
 }
@@ -122,6 +125,9 @@ fn encode_response_body(out: &mut Vec<u8>, body: &response::Body) -> Result<(), 
         response::Body::AddressUri(response) => encode_address_uri_response(out, response),
         response::Body::Signed(response) => encode_signed_response(out, response),
         response::Body::NoncesPrepared(response) => encode_nonces_prepared(out, response),
+        response::Body::Unregistered(response) => {
+            write_descriptor_alias(out, &response.descriptor_alias)
+        }
         response::Body::Info(response) => encode_info_response(out, response),
         response::Body::Error(response) => encode_error_response(out, response),
     }

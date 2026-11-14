@@ -151,6 +151,12 @@ unsafe fn request_body(view: &types::Request) -> request::Body {
                 end: optional(body.has_end, body.end),
             })
         }
+        MessageType::UnregisterDescriptor => {
+            let body = unsafe { view.body.unregister_descriptor };
+            request::Body::UnregisterDescriptor(request::UnregisterDescriptor {
+                descriptor_alias: unsafe { string(body.descriptor_alias) },
+            })
+        }
     }
 }
 

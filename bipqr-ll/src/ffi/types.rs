@@ -89,6 +89,7 @@ pub union RequestBody {
     pub verify_address: VerifyAddress,
     pub sign: Sign,
     pub prepare_nonces: PrepareNonces,
+    pub unregister_descriptor: UnregisterDescriptor,
 }
 
 #[repr(C)]
@@ -110,6 +111,12 @@ pub struct KeyRequest {
 pub struct RegisterDescriptor {
     pub descriptor_alias: *const c_char,
     pub descriptor: *const DescriptorBody,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct UnregisterDescriptor {
+    pub descriptor_alias: *const c_char,
 }
 
 #[repr(C)]
@@ -215,6 +222,7 @@ pub union ResponseBody {
     pub address_uri: AddressUri,
     pub signed: Signed,
     pub nonces_prepared: NoncesPrepared,
+    pub unregistered: Unregistered,
     pub info: Info,
     pub error: ErrorBody,
 }
@@ -265,6 +273,12 @@ pub struct Registration {
     /// `0`, `1`, or `ABSENT_BOOL`.
     pub stored: i8,
     pub proof: Bytes,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Unregistered {
+    pub descriptor_alias: *const c_char,
 }
 
 #[repr(C)]

@@ -15,6 +15,7 @@ pub enum Body {
     AddressUri(AddressUri),
     Signed(Signed),
     NoncesPrepared(NoncesPrepared),
+    Unregistered(Unregistered),
     Info(Info),
     Error(ErrorBody),
 }
@@ -33,6 +34,7 @@ impl From<&Body> for MessageType {
             Body::AddressUri(_) => Self::AddressVerification,
             Body::Signed(_) => Self::Signing,
             Body::NoncesPrepared(_) => Self::NoncePreparation,
+            Body::Unregistered(_) => Self::UnregisterDescriptor,
             Body::Info(_) => Self::GetInfo,
             Body::Error(e) => e.message_type,
         }
@@ -210,6 +212,12 @@ pub struct Registration {
     pub registered: bool,
     pub stored: Option<bool>,
     pub proof: Option<Vec<u8>>,
+}
+
+/// The alias is no longer registered once the signer sends it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Unregistered {
+    pub descriptor_alias: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

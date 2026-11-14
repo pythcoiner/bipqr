@@ -357,6 +357,24 @@ fn absent_descriptor_is_a_null_pointer() {
 }
 
 #[test]
+fn unregister_descriptor_view() {
+    unsafe {
+        let request = request(request::Body::UnregisterDescriptor(
+            request::UnregisterDescriptor {
+                descriptor_alias: "main".to_string(),
+            },
+        ));
+        let view = view(&request);
+        assert_eq!((*view).message_type, 0x07);
+        assert_eq!(
+            text((*view).body.unregister_descriptor.descriptor_alias),
+            "main"
+        );
+        bipqr_request_free(view);
+    }
+}
+
+#[test]
 fn verify_address_view_with_every_option_present() {
     unsafe {
         let request = request(request::Body::VerifyAddress(request::VerifyAddress {
@@ -771,6 +789,28 @@ fn an_absent_proof_encodes_as_absent() {
             panic!("not a registration response")
         };
         assert_eq!(body.proof, None);
+    }
+}
+
+#[test]
+fn unregistered_response_encodes() {
+    unsafe {
+        let alias = CString::new("main").unwrap();
+        let view = response_view(
+            MessageType::UnregisterDescriptor.value(),
+            false,
+            types::ResponseBody {
+                unregistered: types::Unregistered {
+                    descriptor_alias: alias.as_ptr(),
+                },
+            },
+        );
+        assert_eq!(
+            encoded(&view).body,
+            response::Body::Unregistered(response::Unregistered {
+                descriptor_alias: "main".to_string(),
+            })
+        );
     }
 }
 

@@ -13,7 +13,8 @@ use bipqr_ll::ffi::types::{
     FirmwareVersion, GetKeys, Info, KeyRequest, Keys, List, MusigPartialSig, MusigPubNonce,
     NoncesPrepared, Path, PrepareNonces, RegisterDescriptor, Registration, Request, RequestBody,
     Response, ResponseBody, ScanValue, Sign, Signature, SignatureValue, Signed, SignedValue,
-    SpDleqProof, SpEcdhShare, SpKeys, TapKey, TapScript, VerifyAddress,
+    SpDleqProof, SpEcdhShare, SpKeys, TapKey, TapScript, UnregisterDescriptor, Unregistered,
+    VerifyAddress,
 };
 
 macro_rules! check {
@@ -46,12 +47,14 @@ fn the_c_mirror_matches_the_header() {
         VerifyAddress => 56, 8;
         Sign => 40, 8;
         PrepareNonces => 64, 8;
+        UnregisterDescriptor => 8, 8;
         RequestBody => 64, 8;
         Request => 72, 8;
         FirmwareVersion => 12, 4;
         Keys => 56, 8;
         Info => 48, 8;
         Registration => 32, 8;
+        Unregistered => 8, 8;
         AddressUri => 8, 8;
         Ecdsa => 56, 8;
         TapKey => 16, 8;

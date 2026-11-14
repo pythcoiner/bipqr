@@ -66,6 +66,10 @@ Register Descriptor and Address Verification of silent payment keys carry
 (`Scan::Path`) or a scan private key it does not hold (`Scan::Key`). Decode rejects
 a body with both or neither. `SecretKey`'s `Debug` does not print the key.
 
+Unregister Descriptor (`0x07`) uses `request::Body::UnregisterDescriptor` and
+`response::Body::Unregistered`, each carrying only the alias, with the same 32-byte
+bound as Register Descriptor.
+
 Get Info (`0x01`) uses `request::Body::GetInfo`, which carries no body, and
 `response::Body::Info`. Both encode and decode reject a `max_alias` above 32 and a
 `fingerprint` when `state` is not `State::Ready`; an unknown state decodes to

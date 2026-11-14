@@ -192,6 +192,7 @@ pub enum MessageType {
     AddressVerification,
     Signing,
     NoncePreparation,
+    UnregisterDescriptor,
 }
 
 impl MessageType {
@@ -210,6 +211,7 @@ impl From<MessageType> for u8 {
             MessageType::AddressVerification => 0x04,
             MessageType::Signing => 0x05,
             MessageType::NoncePreparation => 0x06,
+            MessageType::UnregisterDescriptor => 0x07,
         }
     }
 }
@@ -226,6 +228,7 @@ impl TryFrom<u8> for MessageType {
             0x04 => Ok(Self::AddressVerification),
             0x05 => Ok(Self::Signing),
             0x06 => Ok(Self::NoncePreparation),
+            0x07 => Ok(Self::UnregisterDescriptor),
             _ => Err(decode::Error::UnknownMessageType(value)),
         }
     }

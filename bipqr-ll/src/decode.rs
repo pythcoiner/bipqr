@@ -121,6 +121,10 @@ pub fn decode(bytes: &[u8]) -> Result<Message, Error> {
             id,
             body: request::Body::PrepareNonces(read_prepare_nonces(&mut reader)?),
         }),
+        (false, _, MessageType::UnregisterDescriptor) => Message::Request(Request {
+            id,
+            body: request::Body::UnregisterDescriptor(read_unregister_request(&mut reader)?),
+        }),
         (false, _, MessageType::GetInfo) => Message::Request(Request {
             id,
             body: request::Body::GetInfo,
@@ -155,6 +159,10 @@ pub fn decode(bytes: &[u8]) -> Result<Message, Error> {
             id,
             body: response::Body::NoncesPrepared(read_nonces_prepared(&mut reader)?),
         }),
+        (true, false, MessageType::UnregisterDescriptor) => Message::Response(Response {
+            id,
+            body: response::Body::Unregistered(read_unregistered_response(&mut reader)?),
+        }),
         (true, false, MessageType::GetInfo) => Message::Response(Response {
             id,
             body: response::Body::Info(read_info_response(&mut reader)?),
@@ -180,6 +188,14 @@ fn read_register_request(reader: &mut Reader<'_>) -> Result<request::RegisterDes
     Ok(request::RegisterDescriptor {
         descriptor_alias: read_descriptor_alias(reader)?,
         descriptor: reader.take_option(read_descriptor_body)?,
+    })
+}
+
+fn read_unregister_request(
+    reader: &mut Reader<'_>,
+) -> Result<request::UnregisterDescriptor, Error> {
+    Ok(request::UnregisterDescriptor {
+        descriptor_alias: read_descriptor_alias(reader)?,
     })
 }
 
@@ -266,6 +282,12 @@ fn read_registration_response(reader: &mut Reader<'_>) -> Result<response::Regis
         registered: reader.take_bool()?,
         stored: reader.take_option(Reader::take_bool)?,
         proof: reader.take_option(Reader::take_bytes)?,
+    })
+}
+
+fn read_unregistered_response(reader: &mut Reader<'_>) -> Result<response::Unregistered, Error> {
+    Ok(response::Unregistered {
+        descriptor_alias: read_descriptor_alias(reader)?,
     })
 }
 

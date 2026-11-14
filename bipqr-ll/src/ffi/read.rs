@@ -34,6 +34,11 @@ pub unsafe fn response(view: &types::Response) -> Result<Response, Error> {
             MessageType::NoncePreparation => {
                 response::Body::NoncesPrepared(nonces_prepared(&view.body.nonces_prepared)?)
             }
+            MessageType::UnregisterDescriptor => {
+                response::Body::Unregistered(response::Unregistered {
+                    descriptor_alias: string(view.body.unregistered.descriptor_alias)?,
+                })
+            }
             MessageType::GetInfo => response::Body::Info(info(&view.body.info)?),
         }
     };
