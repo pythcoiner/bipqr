@@ -76,7 +76,7 @@ fn get_keys_messages() -> Vec<(&'static str, Message)> {
                     patch: 3,
                     flag: response::ReleaseFlag::Beta,
                 },
-                capabilities: response::Capabilities(0x0000_000f),
+                capabilities: response::Capabilities(0x0000_00bf),
             })),
         ),
     ]
@@ -382,7 +382,7 @@ fn info(state: response::State) -> response::Info {
             patch: 3,
             flag: response::ReleaseFlag::Beta,
         },
-        capabilities: response::Capabilities(0x0000_000f),
+        capabilities: response::Capabilities(0x0000_00bf),
         state,
         networks: response::Networks(0x00),
         max_message: 0,
@@ -414,9 +414,9 @@ fn get_info_messages() -> Vec<(&'static str, Message)> {
             response(response::Body::Info(ready_info())),
         ),
         (
-            "get_info_response_psbt_trimming",
+            "get_info_response_unregister",
             response(response::Body::Info(response::Info {
-                capabilities: response::Capabilities(0x0000_002f),
+                capabilities: response::Capabilities(0x0000_00ff),
                 ..ready_info()
             })),
         ),

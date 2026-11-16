@@ -10,8 +10,6 @@ use crate::{
 pub const MAX_PATCH: u32 = 0x00ff_ffff;
 const ERROR_CODE_FUTURE_MIN: u8 = 0x11;
 const ERROR_CODE_FUTURE_MAX: u8 = 0xfe;
-const CAPABILITIES_MASK: u32 =
-    0x0000_000f | response::Capabilities::NONCE_CACHE | response::Capabilities::PSBT_TRIMMING;
 const NETWORKS_MASK: u8 = response::Networks::MAINNET
     | response::Networks::TESTNET
     | response::Networks::SIGNET
@@ -517,7 +515,7 @@ fn write_capabilities(
     out: &mut Vec<u8>,
     capabilities: &response::Capabilities,
 ) -> Result<(), Error> {
-    if capabilities.0 & !CAPABILITIES_MASK != 0 {
+    if capabilities.0 & !response::Capabilities::DEFINED != 0 {
         return Err(Error::ReservedCapabilityBits(capabilities.0));
     }
     out.extend_from_slice(&capabilities.0.to_be_bytes());

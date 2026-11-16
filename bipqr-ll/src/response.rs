@@ -102,15 +102,28 @@ impl From<u8> for ReleaseFlag {
 pub struct Capabilities(pub u32);
 
 impl Capabilities {
-    pub const NONCE_CACHE: u32 = 1 << 4;
-    pub const PSBT_TRIMMING: u32 = 1 << 5;
+    pub const BIP380_DESCRIPTORS: u32 = 1 << 0;
+    pub const BIP388_WALLET_POLICIES: u32 = 1 << 1;
+    pub const MINISCRIPT_SEGWIT_V0: u32 = 1 << 2;
+    pub const MINISCRIPT_TAPROOT: u32 = 1 << 3;
+    pub const SILENT_PAYMENT_SENDS: u32 = 1 << 4;
+    pub const SILENT_PAYMENT_ACCOUNTS: u32 = 1 << 5;
+    pub const UNREGISTER_DESCRIPTOR: u32 = 1 << 6;
+    pub const MUSIG2: u32 = 1 << 7;
+    pub const NONCE_CACHE: u32 = 1 << 8;
+    /// Every bit this version defines.
+    pub const DEFINED: u32 = Self::BIP380_DESCRIPTORS
+        | Self::BIP388_WALLET_POLICIES
+        | Self::MINISCRIPT_SEGWIT_V0
+        | Self::MINISCRIPT_TAPROOT
+        | Self::SILENT_PAYMENT_SENDS
+        | Self::SILENT_PAYMENT_ACCOUNTS
+        | Self::UNREGISTER_DESCRIPTOR
+        | Self::MUSIG2
+        | Self::NONCE_CACHE;
 
     pub fn supports_nonce_cache(self) -> bool {
         self.0 & Self::NONCE_CACHE != 0
-    }
-
-    pub fn supports_psbt_trimming(self) -> bool {
-        self.0 & Self::PSBT_TRIMMING != 0
     }
 }
 

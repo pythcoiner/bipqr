@@ -40,7 +40,7 @@ the signer draws one), an optional session reference, an optional descriptor (th
 a key expression index with an optional inclusive end; the response carries a
 `response::Session` (session ID and reference) only when the signer initialized a
 new session, then the 66-byte public nonces in order, by key expression index then
-input index. Check `Capabilities::supports_nonce_cache()` (bit 4) first. Both encode
+input index. Check `Capabilities::supports_nonce_cache()` (bit 8) first. Both encode
 and decode check that the number of inputs is at least 1, that the range is ordered
 and that a session reference comes with a session ID; decode also rejects a
 response carrying only one of the session ID and reference. Signing with a cached
@@ -49,8 +49,7 @@ the nonce cache BIP draft.
 
 With `request::Sign::accept_trimmed` set, a `Signed::Psbt` answer may leave out
 fields of the request's PSBT, and the coordinator merges it back with the BIP-174
-Combiner. `Capabilities::supports_psbt_trimming()` (bit 5) tells whether the signer
-can trim.
+Combiner.
 
 A signatures-only Signing response carries the BIP-375 ECDH shares and BIP-374 DLEQ
 proofs of a silent payment send as `SignatureEntry::{SpEcdhShare, SpDleqProof}`, each

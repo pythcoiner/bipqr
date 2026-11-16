@@ -587,7 +587,7 @@ fn keys_response_encodes() {
                         patch: 0x00ab_cdef,
                         flag: response::ReleaseFlag::Beta.value(),
                     },
-                    capabilities: 0x0000_000b,
+                    capabilities: 0x0000_008d,
                 },
             },
         );
@@ -606,7 +606,7 @@ fn keys_response_encodes() {
                         patch: 0x00ab_cdef,
                         flag: response::ReleaseFlag::Beta,
                     },
-                    capabilities: response::Capabilities(0x0000_000b),
+                    capabilities: response::Capabilities(0x0000_008d),
                 }),
             }
         );
@@ -637,7 +637,7 @@ fn info_view(state: u8, has_fingerprint: u8, max_alias: u8) -> types::Response {
                     patch: 0x00ab_cdef,
                     flag: response::ReleaseFlag::Alpha.value(),
                 },
-                capabilities: 0x0000_0013,
+                capabilities: 0x0000_010d,
                 state,
                 networks: response::Networks::MAINNET | response::Networks::REGTEST,
                 max_message: 0x0002_0000,
@@ -663,7 +663,7 @@ fn info_response_encodes() {
                     patch: 0x00ab_cdef,
                     flag: response::ReleaseFlag::Alpha,
                 },
-                capabilities: response::Capabilities(0x0000_0013),
+                capabilities: response::Capabilities(0x0000_010d),
                 state,
                 networks: response::Networks(0x12),
                 max_message: 0x0002_0000,

@@ -53,8 +53,15 @@ enum bipqr_message_type {
 };
 
 enum bipqr_capability {
-    BIPQR_CAPABILITY_NONCE_CACHE = 1u << 4,
-    BIPQR_CAPABILITY_PSBT_TRIMMING = 1u << 5
+    BIPQR_CAPABILITY_BIP380_DESCRIPTORS = 1u << 0,
+    BIPQR_CAPABILITY_BIP388_WALLET_POLICIES = 1u << 1,
+    BIPQR_CAPABILITY_MINISCRIPT_SEGWIT_V0 = 1u << 2,
+    BIPQR_CAPABILITY_MINISCRIPT_TAPROOT = 1u << 3,
+    BIPQR_CAPABILITY_SILENT_PAYMENT_SENDS = 1u << 4,
+    BIPQR_CAPABILITY_SILENT_PAYMENT_ACCOUNTS = 1u << 5,
+    BIPQR_CAPABILITY_UNREGISTER_DESCRIPTOR = 1u << 6,
+    BIPQR_CAPABILITY_MUSIG2 = 1u << 7,
+    BIPQR_CAPABILITY_NONCE_CACHE = 1u << 8
 };
 
 /* Open: a value outside this list is a newer state, which counts as not ready. To
@@ -358,14 +365,14 @@ typedef struct {
     const char *vendor;
     const char *model;
     bipqr_firmware_version version;
-    uint32_t capabilities; /* only the low six bits may be set */
+    uint32_t capabilities; /* only the low nine bits may be set */
 } bipqr_keys;
 
 typedef struct {
     const char *vendor;
     const char *model;
     bipqr_firmware_version version;
-    uint32_t capabilities;   /* only the low six bits may be set */
+    uint32_t capabilities;   /* only the low nine bits may be set */
     uint8_t state;           /* BIPQR_STATE_* */
     uint8_t networks;        /* BIPQR_NETWORK_* bits */
     uint32_t max_message;    /* bytes */

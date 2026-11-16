@@ -207,9 +207,9 @@ fn preparation_response_rejects_an_unpaired_session() {
 
 #[test]
 fn nonce_cache_capability_is_separate_and_encodes() {
-    assert_eq!(response::Capabilities::NONCE_CACHE, 0x10);
-    assert!(!response::Capabilities(0x0f).supports_nonce_cache());
-    for mask in [0x10, 0x1f] {
+    assert_eq!(response::Capabilities::NONCE_CACHE, 0x100);
+    assert!(!response::Capabilities(0xff).supports_nonce_cache());
+    for mask in [0x100, 0x1ff] {
         assert!(response::Capabilities(mask).supports_nonce_cache());
         let response = response(response::Body::Keys(response::Keys {
             keys: vec![],

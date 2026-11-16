@@ -311,7 +311,7 @@ impl Builder<'_> {
     fn capabilities(&mut self) -> Capabilities {
         let value = self.u32();
         if self.bool() {
-            Capabilities(value & (0xf | Capabilities::NONCE_CACHE | Capabilities::PSBT_TRIMMING))
+            Capabilities(value & Capabilities::DEFINED)
         } else {
             Capabilities(value)
         }

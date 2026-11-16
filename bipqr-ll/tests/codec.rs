@@ -283,17 +283,15 @@ fn decode_rejects_an_oversized_vector_without_allocating_it() {
 #[test]
 fn encode_rejects_reserved_capability_bits() {
     assert_eq!(
-        encode_response(&keys_response(0x0000_0040)),
-        Err(encode::Error::ReservedCapabilityBits(0x0000_0040))
+        encode_response(&keys_response(0x0000_0200)),
+        Err(encode::Error::ReservedCapabilityBits(0x0000_0200))
     );
 }
 
 #[test]
-fn psbt_trimming_capability_is_bit_5_and_encodes() {
-    assert_eq!(response::Capabilities::PSBT_TRIMMING, 0x20);
-    assert!(!response::Capabilities(0x1f).supports_psbt_trimming());
-    assert!(response::Capabilities(0x20).supports_psbt_trimming());
-    let response = keys_response(0x0000_003f);
+fn unregister_descriptor_capability_is_bit_6_and_encodes() {
+    assert_eq!(response::Capabilities::UNREGISTER_DESCRIPTOR, 0x40);
+    let response = keys_response(0x0000_01ff);
     assert_eq!(
         decode(&encode_response(&response).unwrap()),
         Ok(Message::Response(response))
@@ -992,7 +990,7 @@ mod get_info_response {
                 patch: 0x00ab_cdef,
                 flag: response::ReleaseFlag::Stable,
             },
-            capabilities: response::Capabilities(0x0000_001f),
+            capabilities: response::Capabilities(0x0000_00ff),
             state,
             networks: response::Networks(response::Networks::SIGNET),
             max_message: 0x0001_0000,
