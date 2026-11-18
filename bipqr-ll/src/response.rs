@@ -122,8 +122,54 @@ impl Capabilities {
         | Self::MUSIG2
         | Self::NONCE_CACHE;
 
+    pub fn supports(self, capability: Capability) -> bool {
+        self.0 & capability.bit() != 0
+    }
+
     pub fn supports_nonce_cache(self) -> bool {
-        self.0 & Self::NONCE_CACHE != 0
+        self.supports(Capability::NonceCache)
+    }
+}
+
+/// A capability a signer can advertise in its `Capabilities` bitfield.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Capability {
+    Bip380Descriptors,
+    Bip388WalletPolicies,
+    MiniscriptSegwitV0,
+    MiniscriptTaproot,
+    SilentPaymentSends,
+    SilentPaymentAccounts,
+    UnregisterDescriptor,
+    Musig2,
+    NonceCache,
+}
+
+impl Capability {
+    pub const ALL: [Self; 9] = [
+        Self::Bip380Descriptors,
+        Self::Bip388WalletPolicies,
+        Self::MiniscriptSegwitV0,
+        Self::MiniscriptTaproot,
+        Self::SilentPaymentSends,
+        Self::SilentPaymentAccounts,
+        Self::UnregisterDescriptor,
+        Self::Musig2,
+        Self::NonceCache,
+    ];
+
+    pub const fn bit(self) -> u32 {
+        match self {
+            Self::Bip380Descriptors => Capabilities::BIP380_DESCRIPTORS,
+            Self::Bip388WalletPolicies => Capabilities::BIP388_WALLET_POLICIES,
+            Self::MiniscriptSegwitV0 => Capabilities::MINISCRIPT_SEGWIT_V0,
+            Self::MiniscriptTaproot => Capabilities::MINISCRIPT_TAPROOT,
+            Self::SilentPaymentSends => Capabilities::SILENT_PAYMENT_SENDS,
+            Self::SilentPaymentAccounts => Capabilities::SILENT_PAYMENT_ACCOUNTS,
+            Self::UnregisterDescriptor => Capabilities::UNREGISTER_DESCRIPTOR,
+            Self::Musig2 => Capabilities::MUSIG2,
+            Self::NonceCache => Capabilities::NONCE_CACHE,
+        }
     }
 }
 

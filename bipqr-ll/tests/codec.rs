@@ -289,6 +289,21 @@ fn encode_rejects_reserved_capability_bits() {
 }
 
 #[test]
+fn each_capability_reads_its_own_bit() {
+    let mut defined = 0;
+    for (index, capability) in response::Capability::ALL.into_iter().enumerate() {
+        assert_eq!(capability.bit(), 1 << index);
+        let alone = response::Capabilities(capability.bit());
+        for other in response::Capability::ALL {
+            assert_eq!(alone.supports(other), other == capability);
+        }
+        defined |= capability.bit();
+    }
+    assert_eq!(defined, response::Capabilities::DEFINED);
+    assert!(!response::Capabilities(1 << 31).supports(response::Capability::NonceCache));
+}
+
+#[test]
 fn unregister_descriptor_capability_is_bit_6_and_encodes() {
     assert_eq!(response::Capabilities::UNREGISTER_DESCRIPTOR, 0x40);
     let response = keys_response(0x0000_01ff);
